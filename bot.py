@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import os
+import time
+
 
 client = commands.Bot(command_prefix = ">")
 
@@ -27,6 +29,11 @@ async def stfu(ctx):
 @client.command()
 async def game(ctx):
     vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+    except:
+        pass
     for member in vc.members:
         print(member)
         impostor=str(member)
@@ -36,10 +43,15 @@ async def game(ctx):
         else:
             print("haha jokes on you")
             
-    
+
 @client.command()
 async def done(ctx):
     vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.disconnect()
+    except:
+        pass
     for member in vc.members:
         await member.edit(mute=False)
 
@@ -48,7 +60,33 @@ async def done(ctx):
 async def play(ctx):
     await ctx.send("!p")
 
+@client.command()
+async def meet(ctx):
+    vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.disconnect()
+    except:
+        pass
+    for member in vc.members:
+        await member.edit(mute=False)
+    time.sleep(145)
+    await ctx.send("Lemme guess Shaajan was kicked?")
+    try:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+    except:
+        pass
+    for member in vc.members:
+        print(member)
+        impostor=str(member)
+        print(impostor)
+        if impostor !="Rythm#3722":
+            await member.edit(mute=True) 
+        else:
+            print("haha jokes on you")
+        
 
 
 
-client.run("$Yours")
+client.run("$yours")
