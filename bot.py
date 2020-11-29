@@ -30,7 +30,7 @@ async def game(ctx):
     for member in vc.members:
         print(member)
         impostor=str(member)
-        print(do)
+        print(impostor)
         if impostor !="Rythm#3722":
             await member.edit(mute=True) 
         else:
