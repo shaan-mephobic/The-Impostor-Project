@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands
 import os
+from discord.ext.commands import check
+from discord import voice_client
+from discord import Role
+from discord import Guild
 
 client = commands.Bot(command_prefix = ">")
 
@@ -21,7 +25,20 @@ async def clear(ctx, amount=2):
     await ctx.channel.purge(limit=amount)
 
 @client.command()
-async def whoisyourdaddy(ctx): 
-    await ctx.send("Is that even a question? It's obviously \n shaan_mephobic")
+async def stfu(ctx): 
+    await ctx.send("Yo Shaajan Why can't you just Shut the Fuck Up!")
 
-client.run("#your token")
+@client.command()
+async def game(ctx):
+    vc = ctx.author.voice.channel
+    for member in vc.members:
+        await member.edit(mute=True)
+    
+@client.command()
+async def done(ctx):
+    vc = ctx.author.voice.channel
+    for member in vc.members:
+        await member.edit(mute=False)
+
+
+client.run("NzgyNTQwOTQ0NDQ0MjI3NTk1.X8NsDA.VPE-ToSh-mbiZltX4xLR0PA_1BU")
