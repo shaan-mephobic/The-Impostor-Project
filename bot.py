@@ -24,4 +24,4 @@ async def clear(ctx, amount=2):
 async def whoisyourdaddy(ctx): 
     await ctx.send("Is that even a question? It's obviously \n shaan_mephobic")
 
-client.run("NzgyNTQwOTQ0NDQ0MjI3NTk1.X8NsDA.SGDa_vlS2qKJCAMPKLgEXGQFjXA")
+client.run("#your token")
