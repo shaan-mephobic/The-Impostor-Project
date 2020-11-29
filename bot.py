@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import os
 
-
 client = commands.Bot(command_prefix = ">")
 
 @client.event
@@ -30,9 +29,12 @@ async def game(ctx):
     vc = ctx.author.voice.channel
     for member in vc.members:
         print(member)
-        if member !="Rythm#3722":
-            await member.edit(mute=True)
-                   
+        impostor=str(member)
+        print(do)
+        if impostor !="Rythm#3722":
+            await member.edit(mute=True) 
+        else:
+            print("haha jokes on you")
             
     
 @client.command()
@@ -42,5 +44,11 @@ async def done(ctx):
         await member.edit(mute=False)
 
 
+@client.command()
+async def play(ctx):
+    await ctx.send("!p")
 
-client.run("")
+
+
+
+client.run("$Yours")
