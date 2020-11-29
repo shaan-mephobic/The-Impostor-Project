@@ -1,10 +1,7 @@
 import discord
 from discord.ext import commands
 import os
-from discord.ext.commands import check
-from discord import voice_client
-from discord import Role
-from discord import Guild
+
 
 client = commands.Bot(command_prefix = ">")
 
@@ -32,7 +29,11 @@ async def stfu(ctx):
 async def game(ctx):
     vc = ctx.author.voice.channel
     for member in vc.members:
-        await member.edit(mute=True)
+        print(member)
+        if member !="Rythm#3722":
+            await member.edit(mute=True)
+                   
+            
     
 @client.command()
 async def done(ctx):
@@ -41,4 +42,5 @@ async def done(ctx):
         await member.edit(mute=False)
 
 
-client.run("your_token")
+
+client.run("")
