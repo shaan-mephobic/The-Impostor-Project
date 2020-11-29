@@ -41,4 +41,4 @@ async def done(ctx):
         await member.edit(mute=False)
 
 
-client.run("NzgyNTQwOTQ0NDQ0MjI3NTk1.X8NsDA.VPE-ToSh-mbiZltX4xLR0PA_1BU")
+client.run("your_token")
