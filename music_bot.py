@@ -3,11 +3,13 @@ import functools
 import itertools
 import math
 import random
-
 import discord
 import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
+import time
+
+client = commands.Bot('>', description='Yet another music bot.')
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -486,13 +488,96 @@ class Music(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
 
-
-bot = commands.Bot('music.', description='Yet another music bot.')
-bot.add_cog(Music(bot))
+client.add_cog(Music(client))
 
 
-@bot.event
+@client.event
 async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
+    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(client))
 
-bot.run('TOKEN')
+
+@client.event
+async def on_ready():
+    print("Up And Runnin'!")
+
+@client.command()
+async def clear5(ctx, amount=6):
+    await ctx.channel.purge(limit=amount)
+
+@client.command()
+async def clear3(ctx, amount=4):
+    await ctx.channel.purge(limit=amount)
+
+@client.command()
+async def clear(ctx, amount=2):
+    await ctx.channel.purge(limit=amount)
+
+@client.command()
+async def stfu(ctx): 
+    await ctx.send("Yo Shaajan Why can't you just Shut the Fuck Up!")
+
+@client.command()
+async def ping(ctx):
+     await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
+
+@client.command()
+async def game(ctx):
+    vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+    except:
+        pass
+    for member in vc.members:
+        print(member)
+        impostor=str(member)
+        print(impostor)
+        if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
+            await member.edit(mute=True) 
+        else:
+            print("haha jokes on you")
+            
+
+@client.command()
+async def done(ctx):
+    vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.disconnect()
+    except:
+        pass
+    for member in vc.members:
+        await member.edit(mute=False)
+
+
+
+@client.command()
+async def meet(ctx):
+    vc = ctx.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+        await channel.disconnect()
+    except:
+        pass
+    for member in vc.members:
+        await member.edit(mute=False)
+    time.sleep(145)
+    await ctx.send("Lemme guess Shaajan was kicked?")
+    try:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+    except:
+        pass
+    for member in vc.members:
+        print(member)
+        impostor=str(member)
+        print(impostor)
+        if impostor !="Rythm#3722":
+            await member.edit(mute=True) 
+        else:
+            print("haha jokes on you")
+        
+
+
+
+client.run('TOKEN')
