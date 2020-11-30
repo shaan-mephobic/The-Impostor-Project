@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import time
+import music_bot
 
 
 client = commands.Bot(command_prefix = ">")
@@ -89,4 +90,4 @@ async def meet(ctx):
 
 
 
-client.run("$yours")
+client.run("TOKEN")
