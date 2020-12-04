@@ -9,7 +9,10 @@ from async_timeout import timeout
 from discord.ext import commands
 import time
 
-client = commands.Bot('>', description='Yet another music bot.')
+ 
+
+
+client = commands.Bot('>', description='The UN-SUS BOT (winko wink)')
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -30,7 +33,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'audioformat': 'mp3',
         'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
         'restrictfilenames': True,
-        'noplaylist': True,
+        'noplaylist': False,
         'nocheckcertificate': True,
         'ignoreerrors': False,
         'logtostderr': False,
@@ -46,6 +49,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
     }
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
+    
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
         super().__init__(source, volume)
@@ -186,7 +190,7 @@ class VoiceState:
         self.songs = SongQueue()
 
         self._loop = False
-        self._volume = 0.5
+        self._volume = 1.0
         self.skip_votes = set()
 
         self.audio_player = bot.loop.create_task(self.audio_player_task())
@@ -303,7 +307,7 @@ class Music(commands.Cog):
         If no channel was specified, it joins your channel.
         """
 
-        if not channel and not ctx.author.voice:
+        if channel and ctx.author.voice:
             raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
 
         destination = channel or ctx.author.voice.channel
@@ -318,7 +322,7 @@ class Music(commands.Cog):
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
-        if not ctx.voice_state.voice:
+        if ctx.voice_state.voice:
             return await ctx.send('Not connected to any voice channel.')
 
         await ctx.voice_state.stop()
@@ -328,7 +332,7 @@ class Music(commands.Cog):
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """Sets the volume of the player."""
 
-        if not ctx.voice_state.is_playing:
+        if ctx.voice_state.is_playing:
             return await ctx.send('Nothing being played at the moment.')
 
         if 0 > volume > 100:
@@ -345,10 +349,10 @@ class Music(commands.Cog):
 
     @commands.command(name='pause')
     @commands.has_permissions(manage_guild=True)
-    async def _pause(self, ctx: commands.Context):
+    async def pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
@@ -357,7 +361,7 @@ class Music(commands.Cog):
     async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
@@ -368,7 +372,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.songs.clear()
 
-        if not ctx.voice_state.is_playing:
+        if ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
@@ -377,27 +381,9 @@ class Music(commands.Cog):
         """Vote to skip a song. The requester can automatically skip.
         3 skip votes are needed for the song to be skipped.
         """
+        ctx.voice_state.skip()
 
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Not playing any music right now...')
 
-        voter = ctx.message.author
-        if voter == ctx.voice_state.current.requester:
-            await ctx.message.add_reaction('⏭')
-            ctx.voice_state.skip()
-
-        elif voter.id not in ctx.voice_state.skip_votes:
-            ctx.voice_state.skip_votes.add(voter.id)
-            total_votes = len(ctx.voice_state.skip_votes)
-
-            if total_votes >= 3:
-                await ctx.message.add_reaction('⏭')
-                ctx.voice_state.skip()
-            else:
-                await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
-
-        else:
-            await ctx.send('You have already voted to skip this song.')
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -519,7 +505,7 @@ async def stfu(ctx):
 @client.command()
 async def ping(ctx):
      await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
-
+     
 @client.command()
 async def game(ctx):
     vc = ctx.author.voice.channel
@@ -537,6 +523,12 @@ async def game(ctx):
         else:
             print("haha jokes on you")
             
+@client.command()
+async def whoissus(ctx):
+    vc = ctx.author.voice.channel
+    listofmem=vc.members
+    mem=random.choice(listofmem)
+    print(mem +"kinda looks sus, don't you think?")
 
 @client.command()
 async def done(ctx):
@@ -551,31 +543,31 @@ async def done(ctx):
 
 
 
-@client.command()
-async def meet(ctx):
-    vc = ctx.author.voice.channel
-    try:
-        channel = ctx.author.voice.channel
-        await channel.disconnect()
-    except:
-        pass
-    for member in vc.members:
-        await member.edit(mute=False)
-    time.sleep(145)
-    await ctx.send("Lemme guess Shaajan was kicked?")
-    try:
-        channel = ctx.author.voice.channel
-        await channel.connect()
-    except:
-        pass
-    for member in vc.members:
-        print(member)
-        impostor=str(member)
-        print(impostor)
-        if impostor !="Rythm#3722":
-            await member.edit(mute=True) 
-        else:
-            print("haha jokes on you")
+# @client.command()
+# async def meet(ctx):
+#     vc = ctx.author.voice.channel
+#     try:
+#         channel = ctx.author.voice.channel
+#         await channel.disconnect()
+#     except:
+#         pass
+#     for member in vc.members:
+#         await member.edit(mute=False)
+#     time.sleep(145)
+#     await ctx.send("Lemme guess Shaajan was kicked?")
+#     try:
+#         channel = ctx.author.voice.channel
+#         await channel.connect()
+#     except:
+#         pass
+#     for member in vc.members:
+#         print(member)
+#         impostor=str(member)
+#         print(impostor)
+#         if impostor !="Rythm#3722":
+#             await member.edit(mute=True) 
+#         else:
+#             print("haha jokes on you")
         
 
 
