@@ -343,7 +343,7 @@ class Music(commands.Cog):
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name='pause')
-    async def pause(self, ctx: commands.Context):
+    async def _pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
@@ -514,13 +514,16 @@ async def game(ctx):
             await member.edit(mute=True) 
         else:
             print("haha jokes on you")
+    
             
 @client.command()
 async def whoissus(ctx):
     vc = ctx.author.voice.channel
-    listofmem=vc.members
-    mem=random.choice(listofmem)
-    print(mem +"kinda looks sus, don't you think?")
+    for member in vc.members:
+        thels=[]
+        thels.append(str(member))
+    mem=random.choice(thels)
+    await ctx.send(mem +" kinda looks sus, don't you think?")
 
 @client.command()
 async def done(ctx):
@@ -532,6 +535,10 @@ async def done(ctx):
         pass
     for member in vc.members:
         await member.edit(mute=False)
+
+
+
+
 
 
 
