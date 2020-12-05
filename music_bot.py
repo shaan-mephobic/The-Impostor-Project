@@ -376,6 +376,52 @@ class Music(commands.Cog):
         ctx.voice_state.skip()
 
 
+    @commands.command(name='game')
+    async def _game(self, ctx: commands.Context):
+        vc = ctx.author.voice.channel
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+            ctx.voice_state.voice.resume()
+            await ctx.message.add_reaction('⏯')
+        try:
+            channel = ctx.author.voice.channel
+            await channel.connect()
+        except:
+            pass
+        for member in vc.members:
+            print(member)
+            impostor=str(member)
+            print(impostor)
+            if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
+                await member.edit(mute=True) 
+            else:
+                print("haha jokes on you")
+
+    @commands.command(name='done')
+    async def _done(self, ctx: commands.Context):
+        vc = ctx.author.voice.channel
+        try:
+            channel = ctx.author.voice.channel
+            await channel.disconnect()
+        except:
+            pass
+        for member in vc.members:
+            await member.edit(mute=False)
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+            ctx.voice_state.voice.pause()
+            await ctx.message.add_reaction('⏯')
+
+    @commands.command(name='done!')
+    async def _don(self, ctx: commands.Context):
+        vc = ctx.author.voice.channel
+        try:
+            channel = ctx.author.voice.channel
+            await channel.disconnect()
+        except:
+            pass
+        for member in vc.members:
+            await member.edit(mute=False)
+
+
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -498,22 +544,22 @@ async def stfu(ctx):
 async def ping(ctx):
      await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
      
-@client.command()
-async def game(ctx):
-    vc = ctx.author.voice.channel
-    try:
-        channel = ctx.author.voice.channel
-        await channel.connect()
-    except:
-        pass
-    for member in vc.members:
-        print(member)
-        impostor=str(member)
-        print(impostor)
-        if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
-            await member.edit(mute=True) 
-        else:
-            print("haha jokes on you")
+# @client.command()
+# async def game(ctx):
+#     vc = ctx.author.voice.channel
+#     try:
+#         channel = ctx.author.voice.channel
+#         await channel.connect()
+#     except:
+#         pass
+#     for member in vc.members:
+#         print(member)
+#         impostor=str(member)
+#         print(impostor)
+#         if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
+#             await member.edit(mute=True) 
+#         else:
+#             print("haha jokes on you")
     
             
 @client.command()
@@ -525,16 +571,16 @@ async def whoissus(ctx):
     mem=random.choice(thels)
     await ctx.send(mem +" kinda looks sus, don't you think?")
 
-@client.command()
-async def done(ctx):
-    vc = ctx.author.voice.channel
-    try:
-        channel = ctx.author.voice.channel
-        await channel.disconnect()
-    except:
-        pass
-    for member in vc.members:
-        await member.edit(mute=False)
+# @client.command()
+# async def done(ctx):
+#     vc = ctx.author.voice.channel
+#     try:
+#         channel = ctx.author.voice.channel
+#         await channel.disconnect()
+#     except:
+#         pass
+#     for member in vc.members:
+#         await member.edit(mute=False)
 
 
 
