@@ -539,16 +539,8 @@ async def on_ready():
     print("Up And Runnin'!")
 
 @client.command()
-async def clear5(ctx, amount=6):
-    await ctx.channel.purge(limit=amount)
-
-@client.command()
-async def clear3(ctx, amount=4):
-    await ctx.channel.purge(limit=amount)
-
-@client.command()
-async def clear(ctx, amount=2):
-    await ctx.channel.purge(limit=amount)
+async def clear(ctx, amount: int):
+    await ctx.channel.purge(limit= amount + 1)
 
 @client.command()
 async def stfu(ctx): 
