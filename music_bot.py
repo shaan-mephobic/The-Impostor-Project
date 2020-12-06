@@ -8,6 +8,8 @@ import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
 import time
+import subprocess
+import sys
 
 client = commands.Bot('>', description='The UN-SUS BOT (winko wink)')
 
@@ -254,6 +256,8 @@ class VoiceState:
 
         if self.voice:
             await self.voice.disconnect()
+            await client.logout()
+            subprocess.call([sys.executable, "music_bot.py"])
             self.voice = None
 
 
@@ -375,6 +379,12 @@ class Music(commands.Cog):
         """
         ctx.voice_state.skip()
 
+    @commands.command(name='restart')
+    async def _rest(self, ctx: commands.Context):
+        await ctx.send("Restarted")
+        await client.logout()
+        subprocess.call([sys.executable, "music_bot.py"])
+        await ctx.send("I am Up and Runnin'")
 
     @commands.command(name='game')
     async def _game(self, ctx: commands.Context):
@@ -402,6 +412,8 @@ class Music(commands.Cog):
         try:
             channel = ctx.author.voice.channel
             await channel.disconnect()
+            await client.logout()
+            subprocess.call([sys.executable, "music_bot.py"])
         except:
             pass
         for member in vc.members:
@@ -416,6 +428,8 @@ class Music(commands.Cog):
         try:
             channel = ctx.author.voice.channel
             await channel.disconnect()
+            await client.logout()
+            subprocess.call([sys.executable, "music_bot.py"])
         except:
             pass
         for member in vc.members:
@@ -538,7 +552,23 @@ async def clear(ctx, amount=2):
 
 @client.command()
 async def stfu(ctx): 
-    await ctx.send("Yo Shaajan Why can't you just Shut the Fuck Up!")
+    vc = ctx.author.voice.channel
+    thels=[]
+    for member in vc.members:
+        thels.append(str(member))
+    membe=random.choice(thels)
+    themembe=membe[:-5]
+    await ctx.send("Yo "+themembe+" Why can't you just Shut the Fuck Up!")
+
+@client.command()
+async def whoissimp(ctx): 
+    vc = ctx.author.voice.channel
+    thels=[]
+    for member in vc.members:
+        thels.append(str(member))
+    membe=random.choice(thels)
+    themembe=membe[:-5]
+    await ctx.send(themembe+" can never stop simping for pokimane, so you tell me.")
 
 @client.command()
 async def ping(ctx):
@@ -565,54 +595,13 @@ async def ping(ctx):
 @client.command()
 async def whoissus(ctx):
     vc = ctx.author.voice.channel
+    thels=[]
     for member in vc.members:
-        thels=[]
         thels.append(str(member))
     mem=random.choice(thels)
-    await ctx.send(mem +" kinda looks sus, don't you think?")
+    themembe=mem[:-5]
+    await ctx.send(themembe +" kinda looks sus, don't you think?")
 
-# @client.command()
-# async def done(ctx):
-#     vc = ctx.author.voice.channel
-#     try:
-#         channel = ctx.author.voice.channel
-#         await channel.disconnect()
-#     except:
-#         pass
-#     for member in vc.members:
-#         await member.edit(mute=False)
-
-
-
-
-
-
-
-# @client.command()
-# async def meet(ctx):
-#     vc = ctx.author.voice.channel
-#     try:
-#         channel = ctx.author.voice.channel
-#         await channel.disconnect()
-#     except:
-#         pass
-#     for member in vc.members:
-#         await member.edit(mute=False)
-#     time.sleep(145)
-#     await ctx.send("Lemme guess Shaajan was kicked?")
-#     try:
-#         channel = ctx.author.voice.channel
-#         await channel.connect()
-#     except:
-#         pass
-#     for member in vc.members:
-#         print(member)
-#         impostor=str(member)
-#         print(impostor)
-#         if impostor !="Rythm#3722":
-#             await member.edit(mute=True) 
-#         else:
-#             print("haha jokes on you")
         
 
 
