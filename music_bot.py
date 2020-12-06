@@ -401,7 +401,7 @@ class Music(commands.Cog):
             print(member)
             impostor=str(member)
             print(impostor)
-            if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
+            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
                 await member.edit(mute=True) 
             else:
                 print("haha jokes on you")
@@ -435,7 +435,23 @@ class Music(commands.Cog):
         for member in vc.members:
             await member.edit(mute=False)
 
+    @commands.command(name='meet')
+    async def _meet(self, ctx: commands.Context, ammount: int ):
+        vc = ctx.author.voice.channel
+        for member in vc.members:
+            await member.edit(mute=False)
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+            ctx.voice_state.voice.pause()
+        await asyncio.sleep(ammount + 5)
 
+        ctx.voice_state.voice.resume()
+
+        for member in vc.members:
+            print(member)
+            impostor=str(member)
+            print(impostor)
+            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
+                await member.edit(mute=True) 
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -507,7 +523,7 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
+                source = await YTDLSource.create_source(ctx, search)
             except YTDLError as e:
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
             else:
@@ -527,16 +543,6 @@ class Music(commands.Cog):
                 raise commands.CommandError('Bot is already in a voice channel.')
 
 client.add_cog(Music(client))
-
-
-@client.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(client))
-
-
-@client.event
-async def on_ready():
-    print("Up And Runnin'!")
 
 @client.command()
 async def clear(ctx, amount: int):
@@ -565,25 +571,7 @@ async def whoissimp(ctx):
 @client.command()
 async def ping(ctx):
      await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
-     
-# @client.command()
-# async def game(ctx):
-#     vc = ctx.author.voice.channel
-#     try:
-#         channel = ctx.author.voice.channel
-#         await channel.connect()
-#     except:
-#         pass
-#     for member in vc.members:
-#         print(member)
-#         impostor=str(member)
-#         print(impostor)
-#         if impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105":
-#             await member.edit(mute=True) 
-#         else:
-#             print("haha jokes on you")
-    
-            
+                
 @client.command()
 async def whoissus(ctx):
     vc = ctx.author.voice.channel
@@ -594,8 +582,9 @@ async def whoissus(ctx):
     themembe=mem[:-5]
     await ctx.send(themembe +" kinda looks sus, don't you think?")
 
-        
-
+@client.event
+async def on_ready():
+    print("Up And Runnin'!")
 
 
 client.run('TOKEN')
