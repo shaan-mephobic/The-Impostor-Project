@@ -3,7 +3,7 @@ Ever played Among Us with your friends and someone wouldn't just stop talking or
 
 ### Here are the list of commands that you could use:
 ```
->play - to play a song (>play rock+roll eden).
+>play - to play a song ( here is an example : >play Start//End Eden).
 
 >pause - to pause the song.
 
