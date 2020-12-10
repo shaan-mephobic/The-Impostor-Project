@@ -254,11 +254,8 @@ class VoiceState:
     async def stop(self):
         self.songs.clear()
 
-        if self.voice:
-            await self.voice.disconnect()
-            await client.logout()
-            subprocess.call([sys.executable, "music_bot.py"])
-            self.voice = None
+        if ctx.voice_state.is_playing:
+            await ctx.voice_state.stop()
 
 
 class Music(commands.Cog):
@@ -292,7 +289,7 @@ class Music(commands.Cog):
 
     @commands.command(name='join', invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
-        """Joins a voice channel."""
+        """: Joins a voice channel."""
 
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
@@ -303,7 +300,7 @@ class Music(commands.Cog):
 
     @commands.command(name='summon')
     async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
-        """Summons the bot to a voice channel.
+        """: Summons the bot to a voice channel.
         If no channel was specified, it joins your channel.
         """
 
@@ -318,18 +315,18 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
-    async def _leave(self, ctx: commands.Context):
-        """Clears the queue and leaves the voice channel."""
+    async def _disconnect(self, ctx):
+        """: Leaves the voice channel, if currently in one."""
+        if ctx.guild.voice_client and ctx.guild.voice_client.channel:
+            await ctx.invoke(client.get_command('stop'))
+            await ctx.guild.voice_client.disconnect()
+        else:
+            raise commands.CommandError("Not in a voice channel.")
 
-        if ctx.voice_state.voice:
-            return await ctx.send('Not connected to any voice channel.')
-
-        await ctx.voice_state.stop()
-        del self.voice_states[ctx.guild.id]
 
     @commands.command(name='volume')
     async def _volume(self, ctx: commands.Context, *, volume: int):
-        """Sets the volume of the player."""
+        """: Sets the volume of the player."""
 
         if ctx.voice_state.is_playing:
             return await ctx.send('Nothing being played at the moment.')
@@ -342,13 +339,13 @@ class Music(commands.Cog):
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
-        """Displays the currently playing song."""
+        """: Displays the currently playing song."""
 
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name='pause')
     async def _pause(self, ctx: commands.Context):
-        """Pauses the currently playing song."""
+        """: Pauses the currently playing song."""
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
@@ -356,15 +353,14 @@ class Music(commands.Cog):
 
     @commands.command(name='resume')
     async def _resume(self, ctx: commands.Context):
-        """Resumes a currently paused song."""
-
+        """: Resumes a currently paused song."""
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
     async def _stop(self, ctx: commands.Context):
-        """Stops playing song and clears the queue."""
+        """: Stops playing song and clears the queue."""
 
         ctx.voice_state.songs.clear()
 
@@ -374,88 +370,22 @@ class Music(commands.Cog):
 
     @commands.command(name='skip')
     async def _skip(self, ctx: commands.Context):
-        """Vote to skip a song. The requester can automatically skip.
-        3 skip votes are needed for the song to be skipped.
+        """: Vote to skip a song.
         """
         ctx.voice_state.skip()
 
     @commands.command(name='restart')
+    @commands.has_permissions(administrator=True)
     async def _rest(self, ctx: commands.Context):
+        ''': restarts the Bot(only-Admins)'''
         await ctx.send("Restarted")
         await client.logout()
         subprocess.call([sys.executable, "music_bot.py"])
         await ctx.send("I am Up and Runnin'")
 
-    @commands.command(name='game')
-    async def _game(self, ctx: commands.Context):
-        vc = ctx.author.voice.channel
-        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
-            ctx.voice_state.voice.resume()
-            await ctx.message.add_reaction('⏯')
-        try:
-            channel = ctx.author.voice.channel
-            await channel.connect()
-        except:
-            pass
-        for member in vc.members:
-            print(member)
-            impostor=str(member)
-            print(impostor)
-            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
-                await member.edit(mute=True) 
-            else:
-                print("haha jokes on you")
-
-    @commands.command(name='done')
-    async def _done(self, ctx: commands.Context):
-        vc = ctx.author.voice.channel
-        try:
-            channel = ctx.author.voice.channel
-            await channel.disconnect()
-            await client.logout()
-            subprocess.call([sys.executable, "music_bot.py"])
-        except:
-            pass
-        for member in vc.members:
-            await member.edit(mute=False)
-        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
-            ctx.voice_state.voice.pause()
-            await ctx.message.add_reaction('⏯')
-
-    @commands.command(name='done!')
-    async def _don(self, ctx: commands.Context):
-        vc = ctx.author.voice.channel
-        try:
-            channel = ctx.author.voice.channel
-            await channel.disconnect()
-            await client.logout()
-            subprocess.call([sys.executable, "music_bot.py"])
-        except:
-            pass
-        for member in vc.members:
-            await member.edit(mute=False)
-
-    @commands.command(name='meet')
-    async def _meet(self, ctx: commands.Context, ammount: int ):
-        vc = ctx.author.voice.channel
-        for member in vc.members:
-            await member.edit(mute=False)
-        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
-            ctx.voice_state.voice.pause()
-        await asyncio.sleep(ammount + 5)
-
-        ctx.voice_state.voice.resume()
-
-        for member in vc.members:
-            print(member)
-            impostor=str(member)
-            print(impostor)
-            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
-                await member.edit(mute=True) 
-
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
-        """Shows the player's queue.
+        """: Shows the player's queue.
         You can optionally specify the page to show. Each page contains 10 elements.
         """
 
@@ -478,7 +408,7 @@ class Music(commands.Cog):
 
     @commands.command(name='shuffle')
     async def _shuffle(self, ctx: commands.Context):
-        """Shuffles the queue."""
+        """: Shuffles the queue."""
 
         if len(ctx.voice_state.songs) == 0:
             return await ctx.send('Empty queue.')
@@ -488,7 +418,7 @@ class Music(commands.Cog):
 
     @commands.command(name='remove')
     async def _remove(self, ctx: commands.Context, index: int):
-        """Removes a song from the queue at a given index."""
+        """: Removes a song from the queue at a given index."""
 
         if len(ctx.voice_state.songs) == 0:
             return await ctx.send('Empty queue.')
@@ -498,7 +428,7 @@ class Music(commands.Cog):
 
     @commands.command(name='loop')
     async def _loop(self, ctx: commands.Context):
-        """Loops the currently playing song.
+        """: Loops the currently playing song.
         Invoke this command again to unloop the song.
         """
 
@@ -511,7 +441,7 @@ class Music(commands.Cog):
 
     @commands.command(name='play')
     async def _play(self, ctx: commands.Context, *, search: str):
-        """Plays a song.
+        """: Plays a song.
         If there are songs in the queue, this will be queued until the
         other songs finished playing.
         This command automatically searches from various sites if no URL is provided.
@@ -528,10 +458,9 @@ class Music(commands.Cog):
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
             else:
                 song = Song(source)
-
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
-
+    
     @_join.before_invoke
     @_play.before_invoke
     async def ensure_voice_state(self, ctx: commands.Context):
@@ -542,45 +471,137 @@ class Music(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
 
+    @commands.command(name='game')
+    async def _game(self, ctx: commands.Context):
+        ''': mutes all of them (Beware of annoying kids)'''
+        vc = ctx.author.voice.channel
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+            ctx.voice_state.voice.resume()
+            await ctx.message.add_reaction('⏯')
+        try:
+            channel = ctx.author.voice.channel
+            await channel.connect()
+        except:
+            pass
+        for member in vc.members:
+            print(member)
+            impostor=str(member)
+            print(impostor)
+            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
+                await member.edit(mute=True) 
+            else:
+                print("haha jokes on you")
+
+    @commands.command(name='done')
+    async def _done(self, ctx: commands.Context):
+        ''': Unmutes everyone in VC and pauses the music'''
+        vc = ctx.author.voice.channel
+        try:
+            channel = ctx.author.voice.channel
+            await channel.disconnect()
+            await client.logout()
+            subprocess.call([sys.executable, "music_bot.py"])
+        except:
+            pass
+        for member in vc.members:
+            await member.edit(mute=False)
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+            ctx.voice_state.voice.pause()
+            await ctx.message.add_reaction('⏯')
+
+    @commands.command(name='done!')
+    async def _don(self, ctx: commands.Context):
+        ''': Unmutes everyone in VC and without pausing the music'''
+        vc = ctx.author.voice.channel
+        try:
+            channel = ctx.author.voice.channel
+            await channel.disconnect()
+            await client.logout()
+            subprocess.call([sys.executable, "music_bot.py"])
+        except:
+            pass
+        for member in vc.members:
+            await member.edit(mute=False)
+
+    @commands.command(name='meet')
+    async def _meet(self, ctx: commands.Context, ammount: int ):
+        ''': Unmutes and mutes again in the meeting time'''
+        vc = ctx.author.voice.channel
+        for member in vc.members:
+            await member.edit(mute=False)
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+            ctx.voice_state.voice.pause()
+        await asyncio.sleep(ammount + 5)
+
+        ctx.voice_state.voice.resume()
+
+        for member in vc.members:
+            print(member)
+            impostor=str(member)
+            print(impostor)
+            if (impostor !="Rythm#3722" and impostor!="The-Impostor-Project#4105") and impostor != "The-Imposter-Kid#2083":
+                await member.edit(mute=True)
+
 client.add_cog(Music(client))
 
-@client.command()
-async def clear(ctx, amount: int):
-    await ctx.channel.purge(limit= amount + 1)
 
-@client.command()
-async def stfu(ctx): 
-    vc = ctx.author.voice.channel
-    thels=[]
-    for member in vc.members:
-        thels.append(str(member))
-    membe=random.choice(thels)
-    themembe=membe[:-5]
-    await ctx.send("Yo "+themembe+" Why can't you just Shut the Fuck Up!")
+class Random_Shit(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+    
+    @commands.command()
+    async def clear(self, ctx, amount: int):
+        ''': Clears the messages Eg: >Clear 4, >Clear 5'''
+        await ctx.channel.purge(limit= amount + 1)
 
-@client.command()
-async def whoissimp(ctx): 
-    vc = ctx.author.voice.channel
-    thels=[]
-    for member in vc.members:
-        thels.append(str(member))
-    membe=random.choice(thels)
-    themembe=membe[:-5]
-    await ctx.send(themembe+" can never stop simping for pokimane, so you tell me.")
+    @commands.command()
+    async def stfu(self, ctx): 
+        ''': Says an random person in VC to STFU'''
+        vc = ctx.author.voice.channel
+        thels=[]
+        for member in vc.members:
+            thels.append(str(member))
+        membe=random.choice(thels)
+        themembe=membe[:-5]
+        await ctx.send("Yo "+themembe+" Why can't you just Shut the Fuck Up!")
 
-@client.command()
-async def ping(ctx):
-     await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
-                
-@client.command()
-async def whoissus(ctx):
-    vc = ctx.author.voice.channel
-    thels=[]
-    for member in vc.members:
-        thels.append(str(member))
-    mem=random.choice(thels)
-    themembe=mem[:-5]
-    await ctx.send(themembe +" kinda looks sus, don't you think?")
+    @commands.command()
+    async def whoissimp(self, ctx): 
+        ''': Shows who the real simp is'''
+        vc = ctx.author.voice.channel
+        thels=[]
+        for member in vc.members:
+            thels.append(str(member))
+        membe=random.choice(thels)
+        themembe=membe[:-5]
+        await ctx.send(themembe+" can never stop simping for pokimane, so you tell me.")
+
+    @commands.command()
+    async def ping(self, ctx):
+        ''': Find the latency of the bot'''
+        await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
+                    
+    @commands.command()
+    async def whoissus(self, ctx):
+        ''': Reveals who is the imposter...JK!'''
+        vc = ctx.author.voice.channel
+        thels=[]
+        for member in vc.members:
+            thels.append(str(member))
+        mem=random.choice(thels)
+        themembe=mem[:-5]
+        await ctx.send(themembe +" kinda looks sus, don't you think?")
+
+    @commands.command()
+    async def _help(self, ctx):
+        ''': Shows this message'''
+        helptext = "```"
+        for command in bot.commands:
+            helptext+=f"{command}\n"
+        helptext+="```"
+        await ctx.send(helptext)
+
+client.add_cog(Random_Shit(client))
 
 @client.event
 async def on_ready():
