@@ -11,7 +11,7 @@ import time
 import subprocess
 import sys
 
-client = commands.Bot('>', description='The UN-SUS BOT (winko wink)')
+client = commands.Bot('>', description='THE IMPOSTOR PROJECT COMMANDS')
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -339,13 +339,13 @@ class Music(commands.Cog):
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
-        """: Displays the currently playing song."""
+        """: Displays which song is being played now."""
 
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name='pause')
     async def _pause(self, ctx: commands.Context):
-        """: Pauses the currently playing song."""
+        """: Pauses the playing song."""
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
@@ -353,14 +353,14 @@ class Music(commands.Cog):
 
     @commands.command(name='resume')
     async def _resume(self, ctx: commands.Context):
-        """: Resumes a currently paused song."""
+        """: Resumes the paused song."""
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
     async def _stop(self, ctx: commands.Context):
-        """: Stops playing song and clears the queue."""
+        """: Stops playing the song and clears the queue."""
 
         ctx.voice_state.songs.clear()
 
@@ -418,7 +418,7 @@ class Music(commands.Cog):
 
     @commands.command(name='remove')
     async def _remove(self, ctx: commands.Context, index: int):
-        """: Removes a song from the queue at a given index."""
+        """: Removes the song from the queue at a given index."""
 
         if len(ctx.voice_state.songs) == 0:
             return await ctx.send('Empty queue.')
@@ -428,7 +428,7 @@ class Music(commands.Cog):
 
     @commands.command(name='loop')
     async def _loop(self, ctx: commands.Context):
-        """: Loops the currently playing song.
+        """: Loops the current song.
         Invoke this command again to unloop the song.
         """
 
@@ -511,7 +511,7 @@ class Music(commands.Cog):
 
     @commands.command(name='done!')
     async def _don(self, ctx: commands.Context):
-        ''': Unmutes everyone in VC and without pausing the music'''
+        ''': Unmutes everyone in VC without pausing the music'''
         vc = ctx.author.voice.channel
         try:
             channel = ctx.author.voice.channel
@@ -525,7 +525,7 @@ class Music(commands.Cog):
 
     @commands.command(name='meet')
     async def _meet(self, ctx: commands.Context, ammount: int ):
-        ''': Unmutes and mutes again in the meeting time'''
+        ''': Unmutes everyone and pauses the music so everyone can talk and mutes and resumes the music after the time specified'''
         vc = ctx.author.voice.channel
         for member in vc.members:
             await member.edit(mute=False)
@@ -550,13 +550,14 @@ class Random_Shit(commands.Cog):
         self.client = client
     
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def clear(self, ctx, amount: int):
-        ''': Clears the messages Eg: >Clear 4, >Clear 5'''
+        ''': Clears the messages Eg: >Clear 69.(only admins)'''
         await ctx.channel.purge(limit= amount + 1)
 
     @commands.command()
     async def stfu(self, ctx): 
-        ''': Says an random person in VC to STFU'''
+        ''': Says a random person in VC to STFU'''
         vc = ctx.author.voice.channel
         thels=[]
         for member in vc.members:
@@ -593,7 +594,7 @@ class Random_Shit(commands.Cog):
         await ctx.send(themembe +" kinda looks sus, don't you think?")
 
     @commands.command()
-    async def _help(self, ctx):
+    async def help(self, ctx):
         ''': Shows this message'''
         helptext = "```"
         for command in bot.commands:
