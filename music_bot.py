@@ -222,15 +222,11 @@ class VoiceState:
             self.next.clear()
 
             if not self.loop:
-                # Try to get the next song within 3 minutes.
-                # If no song will be added to the queue in time,
-                # the player will disconnect due to performance
-                # reasons.
                 try:
-                    async with timeout(180):  # 3 minutes
+                    async with timeout(600):  # 10 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
-                    self.bot.loop.create_task(self.stop())
+                    self.bot.loop.create_task(self.stop(self))
                     return
 
             self.current.source.volume = self._volume
@@ -251,7 +247,7 @@ class VoiceState:
         if self.is_playing:
             self.voice.stop()
 
-    async def stop(self):
+    async def stop(self,ctx: commands.Context):
         self.songs.clear()
 
         if ctx.voice_state.is_playing:
@@ -523,9 +519,30 @@ class Music(commands.Cog):
         for member in vc.members:
             await member.edit(mute=False)
 
+    @commands.command()
+    async def dicksize(self, ctx):
+        ''': Reveal Dick Size '''
+        listofdicks=["69mm","69cm","420mm","420cm","15cm","A MICRO DICK FFS!"]
+        size=random.choice(listofdicks)
+        await ctx.send("Your Dick is "+size)
+
+    @commands.command()
+    async def roast(self, ctx):
+        ''': Roast You  '''
+        listofroast=["YOUR FAMILY TREE MUST BE A CACTUS BECAUSE EVERYBODY ON IT IS A PRICK.","YO MAMA'S LIKE THE PANAMA CANAL, VESSELS FULL OF SEAMEN PASS THROUGH HER EVERYDAY.","I HEARD THAT YOUR BROTHER WAS AN ONLY CHILD.","I'D CALL YOU A CUNT, BUT YOU LACK BOTH THE DEPTH AND THE WARMTH.","THE LAST TIME I SAW A FACE LIKE YOURS I FED IT A BANANA.","WHY DON'T YOU SLIP INTO SOMETHING MORE COMFORTABLE -- LIKE A COMA.","YOUR BIRTH CERTIFICATE IS AN APOLOGY LETTER FROM THE CONDOM FACTORY.","YOU'RE SO FAT THE ONLY LETTERS OF THE ALPHABET YOU KNOW ARE KFC.","WITH A FACE LIKE YOURS, I'D WISH I WAS BLIND.","GO APOLOGIZE TO YOUR MOTHER FOR NOT BEING A STILLBORN.","YOUR DICK IS SO SMALL, YOU BOUGHT A KEYCHAIN FLESHLIGHT.","EXCELLENT TIME TO BECOME A MISSING PERSON.","HAVE YOU CONSIDERED SUING YOUR BRAINS FOR NONSUPPORT?","IF YOU WERE ANY STUPIDER, I WOULD HAVE TO WATER YOU TWICE A WEEK.","OH MY GOD, LOOK AT YOU. WAS ANYONE ELSE HURT IN THE ACCIDENT?","CALLING YOU STUPID WOULD BE AN INSULT TO STUPID PEOPLE.","IF YOU REALLY WANT TO KNOW ABOUT MISTAKES, YOU SHOULD ASK YOUR PARENTS.","IF YOU WANT PUSSY JUICE ROLLING DOWN YOUR FACE RN, BETTER START CRYING.","SORRY I DON'T REMEMBER YOU, MOSTLY BECAUSE I DON'T LOOK DOWN BEFORE FLUSHING THE TOILET.","You’re the reason God created the middle finger.","Don’t you get tired of putting make up on two faces every morning?","It’s a shame you can’t Photoshop your personality.","Jealousy is a disease. Get well soon, bitch!","Sorry, sarcasm falls out of my mouth like bullshit falls out of yours.","You have more faces than Mount Rushmore.","Yes, I am a bitch — just not yours.","You should wear a condom on your head. If you’re going to be a dick, you might as well dress like one. ","Being a bitch is a tough job but someone has to do it. ","My middle finger gets a boner every time I see you. ","You’re so real. A real ass.","If I had a face like yours I’d sue my parents.","Whoever told you to be yourself gave you really bad advice.","I didn’t change. I grew up. You should try it sometime.","I thought I had the flu, but then I realized your face makes me sick to my stomach.","I’m jealous of people who don’t know you.","I Wish Shaan could make an app that can make you disappear?","I’d smack you, but that would be animal abuse.","Hey, I found your nose, it’s in my business again!","You’re like a plunger. You like to bring up old shit. ","I hide behind sarcasm because telling you to go fuck yourself is rude in most social situations.","I’d explain it to you but I left my English-to-Dumbass Dictionary at home."]
+        roater=random.choice(listofroast)
+        await ctx.send(roater)
+
+    @commands.command()
+    async def suggestamovie(self, ctx):
+        ''': Suggest Handpicked Movies For You To Watch '''
+        listofmovies=["INTO THE WILD","LUCY","AMERICAN PIE TRIOLOGY","SE7EN","2001: A SPACE ODYSSEY","ALL NOLAN MOVIES FFS","LOVE & OTHER DRUGS","MURDER ON THE ORIENT EXPRESS","JOHN WICK ALL FUCKING PARTS","CATCH ME IF YOU CAN","READY PLAYER ONE","COMMIT SUICIDE IF YOU HAVEN'T WATCHED SHREK","ZOMBIELAND","SUPERBAD","TWO NIGHT STAND","SHAUN OF THE DEAD","CRAZY STUPID LOVE","500 DAYS OF SUMMER","SILVER LININGS PLAYBOOK","PASSENGER"]
+        siwe=random.choice(listofmovies)
+        await ctx.send(siwe)
+    
     @commands.command(name='meet')
     async def _meet(self, ctx: commands.Context, ammount: int ):
-        ''': Unmutes everyone and pauses the music so everyone can talk and mutes and resumes the music after the time specified'''
+        ''': Unmutes Everyone And Pauses The Music So Everyone Can Talk And Mutes And Resumes The Music After The Time Specified'''
         vc = ctx.author.voice.channel
         for member in vc.members:
             await member.edit(mute=False)
@@ -552,12 +569,12 @@ class Random_Shit(commands.Cog):
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, amount: int):
-        ''': Clears the messages Eg: >Clear 69.(only admins)'''
+        ''': Clears The Messages Eg: >Clear 69.(only admins)'''
         await ctx.channel.purge(limit= amount + 1)
 
     @commands.command()
     async def stfu(self, ctx): 
-        ''': Says a random person in VC to STFU'''
+        ''': Says A Random Person In VC To STFU'''
         vc = ctx.author.voice.channel
         thels=[]
         for member in vc.members:
@@ -568,7 +585,7 @@ class Random_Shit(commands.Cog):
 
     @commands.command()
     async def whoissimp(self, ctx): 
-        ''': Shows who the real simp is'''
+        ''': Shows Who The Real Simp Is'''
         vc = ctx.author.voice.channel
         thels=[]
         for member in vc.members:
@@ -579,12 +596,12 @@ class Random_Shit(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        ''': Find the latency of the bot'''
-        await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
+        ''': Find The Latency Of The Bot'''
+        await ctx.send(f'Ping is {round(client.latency * 1000)}ms')
                     
     @commands.command()
     async def whoissus(self, ctx):
-        ''': Reveals who is the imposter...JK!'''
+        ''': Reveals The Imposter...(NOT REALLY)'''
         vc = ctx.author.voice.channel
         thels=[]
         for member in vc.members:
@@ -594,8 +611,8 @@ class Random_Shit(commands.Cog):
         await ctx.send(themembe +" kinda looks sus, don't you think?")
 
     @commands.command()
-    async def help(self, ctx):
-        ''': Shows this message'''
+    async def _help(self, ctx):
+        ''': Shows This Message'''
         helptext = "```"
         for command in bot.commands:
             helptext+=f"{command}\n"
