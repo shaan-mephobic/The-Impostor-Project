@@ -10,12 +10,97 @@ from discord.ext import commands
 import time
 import subprocess
 import sys
+import requests
 
 client = commands.Bot('>', description='THE IMPOSTOR PROJECT COMMANDS')
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
 
+
+class Commands(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+    
+    @commands.command()
+    async def yomama(self, ctx):
+        ''': Return a yomama joke'''
+        await ctx.send(requests.get("https://yomomma-api.herokuapp.com/jokes").json()['joke'])
+        
+    @commands.command()
+    async def joke(self, ctx):
+        ''': Return a joke'''
+        await ctx.send(requests.get("https://geek-jokes.sameerkumar.website/api?format=json").json()['joke'])
+        
+    @commands.command()
+    async def chuck(self, ctx):
+        ''': Return a Chuck Norris joke'''
+        await ctx.send(requests.get("https://api.chucknorris.io/jokes/random").json()['value'])
+
+    @commands.command()
+    async def stoicism(self, ctx):
+        ''': Return a Stoicism quote'''
+        data = requests.get("https://api.themotivate365.com/stoic-quote").json()['data']
+        await ctx.send(data['quote']+"\n~"+data['author'])
+        
+    @commands.command()
+    async def quote(self, ctx):
+        ''': Return a quote'''
+        data = requests.get("https://inspiration.goprogram.ai/").json()
+        await ctx.send(data['quote']+"\n~"+data['author'])
+        
+    @commands.command()
+    async def randomidea(self, ctx):
+        ''': Generate random ideas'''
+        data = requests.get("https://itsthisforthat.com/api.php?json").json()
+        await ctx.send(data['this']+" "+data['that'])
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def clear(self, ctx, amount: int):
+        ''': Clears The Messages Eg: >Clear 69.(only admins)'''
+        await ctx.channel.purge(limit= amount + 1)
+
+    @commands.command()
+    async def stfu(self, ctx): 
+        ''': Says A Random Person In VC To STFU'''
+        vc = ctx.author.voice.channel
+        thels=[]
+        for member in vc.members:
+            thels.append(str(member))
+        membe=random.choice(thels)
+        await ctx.send("Yo "+membe+" Why can't you just Shut the Fuck Up!")
+
+    @commands.command()
+    async def ping(self, ctx):
+        ''': Find The Latency Of The Bot'''
+        await ctx.send(f'Ping is {round(client.latency * 1000)}ms')
+                    
+    @commands.command()
+    async def whoissus(self, ctx):
+        ''': Reveals The Imposter...(NOT REALLY)'''
+        vc = ctx.author.voice.channel
+        thels=[]
+        for member in vc.members:
+            thels.append(str(member))
+        mem=random.choice(thels)
+        await ctx.send(mem +" kinda looks sus, don't you think?")
+        
+    @commands.command()
+    async def roast(self, ctx):
+        ''': Roast You  '''
+        listofroast=["YOUR FAMILY TREE MUST BE A CACTUS BECAUSE EVERYBODY ON IT IS A PRICK.","YO MAMA'S LIKE THE PANAMA CANAL, VESSELS FULL OF SEAMEN PASS THROUGH HER EVERYDAY.","I HEARD THAT YOUR BROTHER WAS AN ONLY CHILD.","I'D CALL YOU A CUNT, BUT YOU LACK BOTH THE DEPTH AND THE WARMTH.","THE LAST TIME I SAW A FACE LIKE YOURS I FED IT A BANANA.","WHY DON'T YOU SLIP INTO SOMETHING MORE COMFORTABLE -- LIKE A COMA.","YOUR BIRTH CERTIFICATE IS AN APOLOGY LETTER FROM THE CONDOM FACTORY.","YOU'RE SO FAT THE ONLY LETTERS OF THE ALPHABET YOU KNOW ARE KFC.","WITH A FACE LIKE YOURS, I'D WISH I WAS BLIND.","GO APOLOGIZE TO YOUR MOTHER FOR NOT BEING A STILLBORN.","YOUR DICK IS SO SMALL, YOU BOUGHT A KEYCHAIN FLESHLIGHT.","EXCELLENT TIME TO BECOME A MISSING PERSON.","HAVE YOU CONSIDERED SUING YOUR BRAINS FOR NONSUPPORT?","IF YOU WERE ANY STUPIDER, I WOULD HAVE TO WATER YOU TWICE A WEEK.","OH MY GOD, LOOK AT YOU. WAS ANYONE ELSE HURT IN THE ACCIDENT?","CALLING YOU STUPID WOULD BE AN INSULT TO STUPID PEOPLE.","IF YOU REALLY WANT TO KNOW ABOUT MISTAKES, YOU SHOULD ASK YOUR PARENTS.","IF YOU WANT PUSSY JUICE ROLLING DOWN YOUR FACE RN, BETTER START CRYING.","SORRY I DON'T REMEMBER YOU, MOSTLY BECAUSE I DON'T LOOK DOWN BEFORE FLUSHING THE TOILET.","You’re the reason God created the middle finger.","Don’t you get tired of putting make up on two faces every morning?","It’s a shame you can’t Photoshop your personality.","Jealousy is a disease. Get well soon, bitch!","Sorry, sarcasm falls out of my mouth like bullshit falls out of yours.","You have more faces than Mount Rushmore.","Yes, I am a bitch — just not yours.","You should wear a condom on your head. If you’re going to be a dick, you might as well dress like one. ","Being a bitch is a tough job but someone has to do it. ","My middle finger gets a boner every time I see you. ","You’re so real. A real ass.","If I had a face like yours I’d sue my parents.","Whoever told you to be yourself gave you really bad advice.","I didn’t change. I grew up. You should try it sometime.","I thought I had the flu, but then I realized your face makes me sick to my stomach.","I’m jealous of people who don’t know you.","I Wish Shaan could make an app that can make you disappear?","I’d smack you, but that would be animal abuse.","Hey, I found your nose, it’s in my business again!","You’re like a plunger. You like to bring up old shit. ","I hide behind sarcasm because telling you to go fuck yourself is rude in most social situations.","I’d explain it to you but I left my English-to-Dumbass Dictionary at home."]
+        roater=random.choice(listofroast)
+        await ctx.send(roater)
+
+    @commands.command()
+    async def suggestamovie(self, ctx):
+        ''': Suggest Handpicked Movies For You To Watch '''
+        listofmovies=["INTO THE WILD","LUCY","AMERICAN PIE TRIOLOGY","SE7EN","2001: A SPACE ODYSSEY","ALL NOLAN MOVIES FFS","LOVE & OTHER DRUGS","MURDER ON THE ORIENT EXPRESS","JOHN WICK ALL FUCKING PARTS","CATCH ME IF YOU CAN","READY PLAYER ONE","COMMIT SUICIDE IF YOU HAVEN'T WATCHED SHREK","ZOMBIELAND","SUPERBAD","TWO NIGHT STAND","SHAUN OF THE DEAD","CRAZY STUPID LOVE","500 DAYS OF SUMMER","SILVER LININGS PLAYBOOK","PASSENGER"]
+        siwe=random.choice(listofmovies)
+        await ctx.send(siwe)
+
+client.add_cog(Commands(client))
 
 class VoiceError(Exception):
     pass
@@ -42,12 +127,14 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'source_address': '0.0.0.0',
     }
 
-    FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-        'options': '-vn',
-    }
+    # FFMPEG_OPTIONS = {
+    #     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    #     'options': '-vn',
+    # }
+    FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
+    # YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist':'}
     
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
@@ -518,20 +605,6 @@ class Music(commands.Cog):
             pass
         for member in vc.members:
             await member.edit(mute=False)
-
-    @commands.command()
-    async def roast(self, ctx):
-        ''': Roast You  '''
-        listofroast=["YOUR FAMILY TREE MUST BE A CACTUS BECAUSE EVERYBODY ON IT IS A PRICK.","YO MAMA'S LIKE THE PANAMA CANAL, VESSELS FULL OF SEAMEN PASS THROUGH HER EVERYDAY.","I HEARD THAT YOUR BROTHER WAS AN ONLY CHILD.","I'D CALL YOU A CUNT, BUT YOU LACK BOTH THE DEPTH AND THE WARMTH.","THE LAST TIME I SAW A FACE LIKE YOURS I FED IT A BANANA.","WHY DON'T YOU SLIP INTO SOMETHING MORE COMFORTABLE -- LIKE A COMA.","YOUR BIRTH CERTIFICATE IS AN APOLOGY LETTER FROM THE CONDOM FACTORY.","YOU'RE SO FAT THE ONLY LETTERS OF THE ALPHABET YOU KNOW ARE KFC.","WITH A FACE LIKE YOURS, I'D WISH I WAS BLIND.","GO APOLOGIZE TO YOUR MOTHER FOR NOT BEING A STILLBORN.","YOUR DICK IS SO SMALL, YOU BOUGHT A KEYCHAIN FLESHLIGHT.","EXCELLENT TIME TO BECOME A MISSING PERSON.","HAVE YOU CONSIDERED SUING YOUR BRAINS FOR NONSUPPORT?","IF YOU WERE ANY STUPIDER, I WOULD HAVE TO WATER YOU TWICE A WEEK.","OH MY GOD, LOOK AT YOU. WAS ANYONE ELSE HURT IN THE ACCIDENT?","CALLING YOU STUPID WOULD BE AN INSULT TO STUPID PEOPLE.","IF YOU REALLY WANT TO KNOW ABOUT MISTAKES, YOU SHOULD ASK YOUR PARENTS.","IF YOU WANT PUSSY JUICE ROLLING DOWN YOUR FACE RN, BETTER START CRYING.","SORRY I DON'T REMEMBER YOU, MOSTLY BECAUSE I DON'T LOOK DOWN BEFORE FLUSHING THE TOILET.","You’re the reason God created the middle finger.","Don’t you get tired of putting make up on two faces every morning?","It’s a shame you can’t Photoshop your personality.","Jealousy is a disease. Get well soon, bitch!","Sorry, sarcasm falls out of my mouth like bullshit falls out of yours.","You have more faces than Mount Rushmore.","Yes, I am a bitch — just not yours.","You should wear a condom on your head. If you’re going to be a dick, you might as well dress like one. ","Being a bitch is a tough job but someone has to do it. ","My middle finger gets a boner every time I see you. ","You’re so real. A real ass.","If I had a face like yours I’d sue my parents.","Whoever told you to be yourself gave you really bad advice.","I didn’t change. I grew up. You should try it sometime.","I thought I had the flu, but then I realized your face makes me sick to my stomach.","I’m jealous of people who don’t know you.","I Wish Shaan could make an app that can make you disappear?","I’d smack you, but that would be animal abuse.","Hey, I found your nose, it’s in my business again!","You’re like a plunger. You like to bring up old shit. ","I hide behind sarcasm because telling you to go fuck yourself is rude in most social situations.","I’d explain it to you but I left my English-to-Dumbass Dictionary at home."]
-        roater=random.choice(listofroast)
-        await ctx.send(roater)
-
-    @commands.command()
-    async def suggestamovie(self, ctx):
-        ''': Suggest Handpicked Movies For You To Watch '''
-        listofmovies=["INTO THE WILD","LUCY","AMERICAN PIE TRIOLOGY","SE7EN","2001: A SPACE ODYSSEY","ALL NOLAN MOVIES FFS","LOVE & OTHER DRUGS","MURDER ON THE ORIENT EXPRESS","JOHN WICK ALL FUCKING PARTS","CATCH ME IF YOU CAN","READY PLAYER ONE","COMMIT SUICIDE IF YOU HAVEN'T WATCHED SHREK","ZOMBIELAND","SUPERBAD","TWO NIGHT STAND","SHAUN OF THE DEAD","CRAZY STUPID LOVE","500 DAYS OF SUMMER","SILVER LININGS PLAYBOOK","PASSENGER"]
-        siwe=random.choice(listofmovies)
-        await ctx.send(siwe)
     
     @commands.command(name='meet')
     async def _meet(self, ctx: commands.Context, ammount: int ):
@@ -554,69 +627,8 @@ class Music(commands.Cog):
 
 client.add_cog(Music(client))
 
-
-class Random_Shit(commands.Cog):
-    def __init__(self, client):
-        self.client = client
-    
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def clear(self, ctx, amount: int):
-        ''': Clears The Messages Eg: >Clear 69.(only admins)'''
-        await ctx.channel.purge(limit= amount + 1)
-
-    @commands.command()
-    async def stfu(self, ctx): 
-        ''': Says A Random Person In VC To STFU'''
-        vc = ctx.author.voice.channel
-        thels=[]
-        for member in vc.members:
-            thels.append(str(member))
-        membe=random.choice(thels)
-        themembe=membe[:-5]
-        await ctx.send("Yo "+themembe+" Why can't you just Shut the Fuck Up!")
-
-    @commands.command()
-    async def whoissimp(self, ctx): 
-        ''': Shows Who The Real Simp Is'''
-        vc = ctx.author.voice.channel
-        thels=[]
-        for member in vc.members:
-            thels.append(str(member))
-        membe=random.choice(thels)
-        themembe=membe[:-5]
-        await ctx.send(themembe+" can never stop simping for pokimane, so you tell me.")
-
-    @commands.command()
-    async def ping(self, ctx):
-        ''': Find The Latency Of The Bot'''
-        await ctx.send(f'Ping is {round(client.latency * 1000)}ms')
-                    
-    @commands.command()
-    async def whoissus(self, ctx):
-        ''': Reveals The Imposter...(NOT REALLY)'''
-        vc = ctx.author.voice.channel
-        thels=[]
-        for member in vc.members:
-            thels.append(str(member))
-        mem=random.choice(thels)
-        themembe=mem[:-5]
-        await ctx.send(themembe +" kinda looks sus, don't you think?")
-
-    @commands.command()
-    async def _help(self, ctx):
-        ''': Shows This Message'''
-        helptext = "```"
-        for command in bot.commands:
-            helptext+=f"{command}\n"
-        helptext+="```"
-        await ctx.send(helptext)
-
-client.add_cog(Random_Shit(client))
-
 @client.event
 async def on_ready():
     print("Up And Runnin'!")
-
 
 client.run('TOKEN')
